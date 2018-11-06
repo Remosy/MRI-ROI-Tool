@@ -1,0 +1,1212 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gui_Main</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-10-08"><meta name="DC.source" content="gui_Main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> gui_Main
+    <span class="comment">%Variables</span>
+    f = uifigure(<span class="string">'Position'</span>, [0 0 1280 768],<span class="string">'Name'</span>,<span class="string">'Shim Tool'</span>);
+    imageData = [];
+    gui_ROI = [];
+    pickLayer_list = {};
+    mainEvent = [];
+    isFirstShim = 0;
+    pos = 0; <span class="comment">%pos for Shim bar graph and images</span>
+    CN = []; <span class="comment">%input of channel</span>
+    channel_fig =[];
+    current_layer = 1;
+    current_channel = 1;
+    shimList = [];
+    shimList_B1p =[];
+    mask_shm = [];
+    <span class="comment">%Add to class:ImageData</span>
+    addpath(genpath(<span class="string">'../Process'</span>));
+
+    <span class="comment">%TopTab</span>
+    topGroup = uitabgroup(f,<span class="string">'Position'</span>,[0 668 1280 100]);
+
+    tab_home = uitab(topGroup, <span class="string">'Title'</span>, <span class="string">'HOME'</span>);
+    tab_home.BackgroundColor = [.1 .1 .1];
+
+    tab_editor = uitab(topGroup, <span class="string">'Title'</span>, <span class="string">'EDITOR'</span>);
+    tab_editor.BackgroundColor = [.1 .1 .1];
+
+    tab_help = uitab(topGroup, <span class="string">'Title'</span>, <span class="string">'HELP'</span>);
+    tab_help.BackgroundColor = [.1 .1 .1];
+
+    <span class="comment">%TopTab______HOME</span>
+    uibutton(tab_home,<span class="string">'ButtonPushedFcn'</span>, @(btn,event)callbkPatient(btn),<span class="string">'BackgroundColor'</span>,[.1 .1 .1],<span class="string">'Text'</span>, <span class="string">''</span>,<span class="string">'Icon'</span>,<span class="string">'../UIimg/patient.png'</span>,<span class="string">'Position'</span>, [50 20 50 50]);
+    uilabel(tab_home,<span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="string">'FontColor'</span>,<span class="string">'w'</span>,<span class="string">'Text'</span>,<span class="string">'Patient'</span>,<span class="string">'Position'</span>, [50 -30 50 50]);
+
+    uibutton(tab_home,<span class="string">'ButtonPushedFcn'</span>, @(btn,event)callbkRefresh(btn),<span class="string">'BackgroundColor'</span>,[.1 .1 .1],<span class="string">'Text'</span>, <span class="string">''</span>,<span class="string">'Icon'</span>, <span class="string">'../UIimg/refresh.png'</span>,<span class="string">'Position'</span>, [200 20 50 50]);
+    uilabel(tab_home,<span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="string">'FontColor'</span>,<span class="string">'w'</span>,<span class="string">'Text'</span>,<span class="string">'Refresh'</span>,<span class="string">'Position'</span>, [200 -30 50 50]);
+
+    uibutton(tab_home,<span class="string">'ButtonPushedFcn'</span>, @(btn,event)callbkSave(btn),<span class="string">'BackgroundColor'</span>,[.1 .1 .1],<span class="string">'Text'</span>, <span class="string">''</span>,<span class="string">'Icon'</span>, <span class="string">'../UIimg/save.png'</span>,<span class="string">'Position'</span>, [350 20 50 50]);
+    uilabel(tab_home,<span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="string">'FontColor'</span>,<span class="string">'w'</span>,<span class="string">'Text'</span>,<span class="string">'Save'</span>,<span class="string">'Position'</span>, [350 -30 50 50]);
+
+    uibutton(tab_home,<span class="string">'ButtonPushedFcn'</span>, @(btn,event)callbkExport(btn),<span class="string">'BackgroundColor'</span>,[.1 .1 .1],<span class="string">'Text'</span>, <span class="string">''</span>,<span class="string">'Icon'</span>, <span class="string">'../UIimg/export.png'</span>,<span class="string">'Position'</span>, [500 20 50 50]);
+    uilabel(tab_home,<span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="string">'FontColor'</span>,<span class="string">'w'</span>,<span class="string">'Text'</span>,<span class="string">'Export'</span>,<span class="string">'Position'</span>, [500 -30 50 50]);
+
+    <span class="comment">%TopTab______EDITOR</span>
+    uibutton(tab_editor,<span class="string">'ButtonPushedFcn'</span>, @(btn,event)callbkAddShim(btn),<span class="string">'BackgroundColor'</span>,[.1 .1 .1],<span class="string">'Text'</span>, <span class="string">''</span>,<span class="string">'Icon'</span>,<span class="string">'../UIimg/add.png'</span>,<span class="string">'Position'</span>, [50 20 50 50]);
+    uilabel(tab_editor,<span class="string">'FontColor'</span>,<span class="string">'w'</span>,<span class="string">'Text'</span>,<span class="string">'Add Shim'</span>,<span class="string">'Position'</span>, [50 -30 100 50]);
+
+    uibutton(tab_editor,<span class="string">'ButtonPushedFcn'</span>, @(btn,event)callbkShimLists(btn),<span class="string">'BackgroundColor'</span>,[.1 .1 .1],<span class="string">'Text'</span>, <span class="string">''</span>,<span class="string">'Icon'</span>, <span class="string">'../UIimg/list.png'</span>,<span class="string">'Position'</span>, [200 20 50 50]);
+    uilabel(tab_editor,<span class="string">'FontColor'</span>,<span class="string">'w'</span>,<span class="string">'Text'</span>,<span class="string">'Shim Lists'</span>,<span class="string">'Position'</span>, [200 -30 100 50]);
+
+    uibutton(tab_editor,<span class="string">'ButtonPushedFcn'</span>, @(btn,event)callbkROIToolBox(btn),<span class="string">'BackgroundColor'</span>,[.1 .1 .1],<span class="string">'Text'</span>, <span class="string">''</span>,<span class="string">'Icon'</span>, <span class="string">'../UIimg/drawroi.png'</span>,<span class="string">'Position'</span>, [350 20 50 50]);
+    uilabel(tab_editor,<span class="string">'FontColor'</span>,<span class="string">'w'</span>,<span class="string">'Text'</span>,<span class="string">'Draw ROI'</span>,<span class="string">'Position'</span>, [350 -30 100 50]);
+
+    uibutton(tab_editor,<span class="string">'ButtonPushedFcn'</span>, @(btn,event)callbkAnalysis(btn),<span class="string">'BackgroundColor'</span>,[.1 .1 .1],<span class="string">'Text'</span>, <span class="string">''</span>,<span class="string">'Icon'</span>, <span class="string">'../UIimg/compare.png'</span>,<span class="string">'Position'</span>, [500 20 50 50]);
+    uilabel(tab_editor,<span class="string">'FontColor'</span>,<span class="string">'w'</span>,<span class="string">'Text'</span>,<span class="string">'Analysis'</span>,<span class="string">'Position'</span>, [500 -30 100 50]);
+
+    <span class="comment">%TopTab______HELP</span>
+    uibutton(tab_help,<span class="string">'ButtonPushedFcn'</span>, @(btn,event)callbkErrors(btn),<span class="string">'BackgroundColor'</span>,[.1 .1 .1],<span class="string">'Text'</span>, <span class="string">''</span>,<span class="string">'Icon'</span>, <span class="string">'../UIimg/error.png'</span>,<span class="string">'Position'</span>, [50 20 50 50]);
+    uilabel(tab_help,<span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="string">'FontColor'</span>,<span class="string">'w'</span>,<span class="string">'Text'</span>,<span class="string">'Errors'</span>,<span class="string">'Position'</span>, [50 -30 50 50]);
+
+    uibutton(tab_help,<span class="string">'ButtonPushedFcn'</span>, @(btn,event)callbkGuide(btn),<span class="string">'BackgroundColor'</span>,[.1 .1 .1],<span class="string">'Text'</span>, <span class="string">''</span>,<span class="string">'Icon'</span>, <span class="string">'../UIimg/guide.png'</span>,<span class="string">'Position'</span>, [200 20 50 50]);
+    uilabel(tab_help,<span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="string">'FontColor'</span>,<span class="string">'w'</span>,<span class="string">'Text'</span>,<span class="string">'Guide'</span>,<span class="string">'Position'</span>, [200 -30 50 50]);
+
+    <span class="comment">%ImagePanel</span>
+    imagePanelGroup = uipanel(f,<span class="string">'Position'</span>, [0 270 1280 400],<span class="string">'Tag'</span>,<span class="string">'imagePanelGroup'</span>);
+        <span class="comment">%Channel</span>
+        uilabel(imagePanelGroup,<span class="string">'FontColor'</span>,<span class="string">'k'</span>,<span class="string">'Text'</span>,<span class="string">'Channel'</span>,<span class="string">'Position'</span>, [30 10 50 20]);
+        channel = uitextarea(imagePanelGroup,<span class="string">'Position'</span>, [80 10 30 20],<span class="string">'ValueChangedFcn'</span>,@(textarea,event) callbkChannel1(textarea));
+        slider_channel = uislider(imagePanelGroup,<span class="string">'ValueChangedFcn'</span>,@(sld,event)callbkChannel2(event),<span class="string">'Limit'</span>,[1 8],<span class="string">'Position'</span>, [120 30 200 3],<span class="string">'MinorTicks'</span>,[]);
+        <span class="comment">%Layer(s)</span>
+        uilabel(imagePanelGroup,<span class="string">'FontColor'</span>,<span class="string">'k'</span>,<span class="string">'Text'</span>,<span class="string">'Layer(s): '</span>,<span class="string">'Position'</span>, [350 360 50 20]);
+        layerFrom = uitextarea(imagePanelGroup,<span class="string">'Position'</span>, [350 340 30 20],<span class="string">'ValueChangedFcn'</span>,@(textarea,event) callbkLayer1(textarea));
+        slider_layer = uislider(imagePanelGroup,<span class="string">'ValueChangingFcn'</span>,@(sld,event)callbkLayer(event),<span class="string">'Limit'</span>,[1 8],<span class="string">'Position'</span>, [350 110 200 3],<span class="string">'Orientation'</span>,<span class="string">'Vertical'</span>);
+        button_angleState = uibutton(imagePanelGroup,<span class="string">'state'</span>,<span class="string">'ValueChangedFcn'</span>, @(value,event)callbkAngleImage(event),<span class="string">'BackgroundColor'</span>,[1 1 1],<span class="string">'Text'</span>,<span class="string">''</span>,<span class="string">'Icon'</span>, <span class="string">'../UIimg/angleImg.png'</span>,<span class="string">'Position'</span>, [340 10 50 50]);
+     imageTabGroup = uitabgroup(f,<span class="string">'Position'</span>,[0, 0, 1280 270]);
+
+    <span class="comment">%Display Channel image on imagePanel</span>
+    <span class="keyword">function</span> DisplayChannelImage(value)
+        <span class="keyword">if</span> isempty(imageData)
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+        gui = findall(0,<span class="string">'Type'</span>,<span class="string">'uipanel'</span>,<span class="string">'Title'</span>,<span class="string">'Origin'</span>);
+        axes = findobj(gui,<span class="string">'-depth'</span>,1);
+        img = imageData.ImageSignal;
+        <span class="keyword">if</span> button_angleState.Value == 1
+           img = angle(img);
+        <span class="keyword">end</span>
+        current_channel = value;
+        Out = abs(img(:,:,current_layer,value))./max(max(abs(img(:,:,current_layer,value))));
+        imshow(Out,<span class="string">'Parent'</span>,axes(end));
+    <span class="keyword">end</span>
+
+     <span class="comment">%Display Slice image on imagePanel</span>
+    <span class="keyword">function</span> DisplayLayerImage(val)
+        <span class="keyword">if</span> isempty(imageData)
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+        gui = findall(0,<span class="string">'Type'</span>,<span class="string">'uipanel'</span>,<span class="string">'Title'</span>,<span class="string">'Origin'</span>);
+        axes = findobj(gui,<span class="string">'-depth'</span>,1);
+        img = imageData.ImageSignal;
+        <span class="comment">%size(img)</span>
+        <span class="keyword">if</span> button_angleState.Value == 1
+           img = angle(img);
+        <span class="keyword">end</span>
+        current_layer = val;
+        Out = abs(img(:,:,val,round(slider_channel.Value)))./max(max(abs(img(:,:,val,round(slider_channel.Value)))));
+        <span class="comment">%Out = Out(:,:,round(slider_channel.Value));</span>
+        imshow(Out,<span class="string">'Parent'</span>,axes(end));
+        <span class="keyword">if</span> ~isempty(gui_ROI)
+            layer_roi = de2bi(gui_ROI.roi_result.SelectedLayers,imageData.NumSlice);
+            <span class="keyword">if</span>(layer_roi(val)==1)
+                <span class="comment">% Mask traces</span>
+                colors=prism;
+                [B,L] = bwboundaries(gui_ROI.roi_result.Mask);
+                hold(axes(end),<span class="string">'on'</span>);
+                <span class="keyword">for</span> k = 1:length(B)
+                   boundary = B{k};
+                   cidx = mod(k,length(colors))+1;
+                   plot(axes(end),boundary(:,2), boundary(:,1),<span class="string">'Color'</span>,colors(cidx,:,:), <span class="string">'LineWidth'</span>, 2);
+                   <span class="comment">%randomize text position for better visibility</span>
+                   rndRow = ceil(length(boundary)/(mod(rand*k,7)+1));
+                   col = boundary(rndRow,2); row = boundary(rndRow,1);
+                   h = text(col+1, row-1,num2str(L(row,col)),<span class="string">'Parent'</span>,axes(end));
+                   <span class="keyword">if</span>(k==length(B))
+                       text(5, 5,gui_ROI.roi_result.ID,<span class="string">'Parent'</span>,axes(end),<span class="string">'Color'</span>,colors(cidx,:,:));
+                   <span class="keyword">end</span>
+                   set(h,<span class="string">'Color'</span>,colors(cidx,:,:),<span class="string">'FontSize'</span>,14,<span class="string">'FontWeight'</span>,<span class="string">'bold'</span>);
+                <span class="keyword">end</span>
+                hold(axes(end),<span class="string">'off'</span>);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        getShimPanels = findall(0,<span class="string">'Parent'</span>,imagePanelGroup,<span class="string">'Tag'</span>,<span class="string">'Shim'</span>,<span class="string">'Type'</span>,<span class="string">'uiPanel'</span>);
+        <span class="keyword">if</span> ~isempty(getShimPanels)
+            helper_ShimSlider(val,getShimPanels);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    <span class="keyword">function</span> callbkLayer1(textarea)
+        <span class="keyword">if</span> isempty(imageData)
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+        value = str2double(textarea.Value);
+        <span class="keyword">if</span> value &lt; slider_layer.Limits(1) || value &gt; slider_layer.Limits(2)
+            uialert(f,<span class="string">'Please check the range of layer'</span>,<span class="string">'Invalid Layer'</span>);
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+        slider_layer.Value = round(value);
+        DisplayLayerImage(round(slider_layer.Value));
+    <span class="keyword">end</span>
+
+    <span class="comment">%Display Layer image with current Channel on imagePanel</span>
+    <span class="keyword">function</span> callbkLayer(event)
+        <span class="keyword">if</span> isempty(imageData)
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+        val = round(event.Value);
+        layerFrom.Value = num2str(val);
+        layerTo.Value = num2str(val);
+        DisplayLayerImage(val);
+    <span class="keyword">end</span>
+
+
+
+    <span class="keyword">function</span> callbkChannel1(textarea)
+        <span class="keyword">if</span> isempty(imageData)
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+        value = str2double(textarea.Value);
+        <span class="keyword">if</span> value &lt; slider_channel.Limits(1) || value &gt; slider_channel.Limits(2)
+            uialert(f,<span class="string">'Please check the range of channel'</span>,<span class="string">'Invalid Channel'</span>);
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+        slider_channel.Value = round(value);
+        DisplayChannelImage(round(slider_channel.Value));
+    <span class="keyword">end</span>
+
+    <span class="keyword">function</span> callbkChannel2(event)
+        <span class="keyword">if</span> isempty(imageData)
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+        channel.Value = num2str(round(event.Value));
+        DisplayChannelImage(round(event.Value));
+    <span class="keyword">end</span>
+
+    <span class="comment">% Layer Selected callback</span>
+    <span class="keyword">function</span> updateROIonLayers(src,event)
+         pickLayer_list = src.Items;
+         pickLayer_list = ismember(pickLayer_list,src.Value);
+    <span class="keyword">end</span>
+
+    <span class="comment">% Layer Updated callback</span>
+    <span class="keyword">function</span> callbkUpdateROIonLayers(src,event)
+        <span class="keyword">if</span> ~isempty(pickLayer_list)
+            gui_ROI.roi_result.SelectedLayers = bi2de(pickLayer_list==1)
+        <span class="keyword">end</span>
+        callbkAddShim();
+    <span class="keyword">end</span>
+
+    <span class="comment">%Display patient's basic information on imagePanel</span>
+    <span class="keyword">function</span> DisplayBasicInfo(name,str_folder,str_size,str_date,str_format)
+        t = findall(0,<span class="string">'Parent'</span>,imageTabGroup, <span class="string">'Title'</span>, name);
+        <span class="keyword">if</span> ~isempty(t)
+            delete(t);
+        <span class="keyword">end</span>
+        t = uitab(imageTabGroup, <span class="string">'Title'</span>, name);
+        lbox = uilistbox(t,<span class="string">'Position'</span>,[50 120 500 100]);
+        str_ID = strcat(<span class="string">'ID: '</span>,imageData.ID);
+        str_Channel = strcat(<span class="string">'Number Of Channel: '</span>,num2str(imageData.NumChannel));
+        lbox.Items = {str_ID, str_Channel, char(str_folder),char(str_size),char(str_date),char(str_format)};
+        roi_lbox = uilistbox(t,<span class="string">'ValueChangedFcn'</span>, @updateROIonLayers,<span class="string">'Position'</span>,[600 70 100 150]);
+        <span class="keyword">for</span> ii = 1 : slider_layer.Limits(2)
+             cell = strcat(<span class="string">'Layer_'</span>,num2str(ii));
+             roi_lbox.Items{ii} = cell;
+        <span class="keyword">end</span>
+        roi_lbox.Multiselect = <span class="string">'on'</span>;
+        uibutton(t,<span class="string">'ButtonPushedFcn'</span>, @(btn,event)callbkUpdateROIonLayers(btn),<span class="string">'Position'</span>, [600 20 100 50],<span class="string">'Text'</span>,<span class="string">'Update ROIs'</span>);
+    <span class="keyword">end</span>
+
+    <span class="keyword">function</span> helper_ShimSlider(val,getShimPanels)
+         numShim = size(getShimPanels,1);
+         <span class="keyword">for</span> ii = 1:numShim
+            get_leftAxes = findall(0,<span class="string">'Parent'</span>,getShimPanels(numShim+1-ii),<span class="string">'Tag'</span>,<span class="string">'abs(shim)'</span>);
+            get_rightAxes = findall(0,<span class="string">'Parent'</span>,getShimPanels(numShim+1-ii),<span class="string">'Tag'</span>,<span class="string">'angle(shim)'</span>);
+            panel = findall(0,<span class="string">'Parent'</span>,getShimPanels(numShim+1-ii));
+            efficiency_label = panel(1);
+            inhomogeneity_label = panel(2);
+            shim = shimList_B1p(:,:,:,ii);
+
+            <span class="comment">%Calculate Differences &amp; Inhomogeneity</span>
+            diff = abs(shim(mask_shm)) - mean(abs(shim(mask_shm)));
+            inhomogeneity = sqrt(mean(diff.^2))./mean(abs(shim(mask_shm)))
+            text1 = sprintf(<span class="string">'Inhomogeneity = %s'</span>,num2str(inhomogeneity));
+            set(inhomogeneity_label,<span class="string">'Text'</span>,text1);
+
+            <span class="comment">%Calculate Efficiency</span>
+            b1_PO = shimList_B1p(:,:,val,3);<span class="comment">%Phase_Only</span>
+            b1_shim = shim(:,:,val);
+            efficiency = mean(abs(b1_shim(mask_shm(:,:,val))))./mean(abs(b1_PO(mask_shm(:,:,val))))
+
+            text2 = sprintf(<span class="string">'Efficiency = %s'</span>,num2str(efficiency));
+            set(efficiency_label,<span class="string">'Text'</span>,text2);
+            <span class="comment">%[crpimg,crpimg_angle]=CropShimImg(shim(:,:,val));</span>
+            <span class="comment">%imshow(crpimg,[],'Parent',get_leftAxes); hold(axes,'on');</span>
+            <span class="comment">%imshow(crpimg_angle,[],'Parent',get_rightAxes); hold(axes,'off');</span>
+            imshow(abs(shim(:,:,val)),[],<span class="string">'Parent'</span>,get_leftAxes); hold(axes,<span class="string">'on'</span>);
+            imshow(angle(shim(:,:,val)),[],<span class="string">'Parent'</span>,get_rightAxes); hold(axes,<span class="string">'off'</span>);
+        <span class="keyword">end</span>
+        close(gcf);
+    <span class="keyword">end</span>
+
+    <span class="comment">%ShimSlider Helper</span>
+    <span class="keyword">function</span> callbkShimSlider(event)
+        val = round(event.Value);
+        getShimPanels = findall(0,<span class="string">'Parent'</span>,imagePanelGroup,<span class="string">'Tag'</span>,<span class="string">'Shim'</span>,<span class="string">'Type'</span>,<span class="string">'uiPanel'</span>);
+        helper_ShimSlider(val,getShimPanels);
+    <span class="keyword">end</span>
+
+    <span class="keyword">function</span> [crpimg,crpimg_angle]=CropShimImg(shim)
+        structBoundaries = bwboundaries(abs(shim));
+        xy=structBoundaries{1}; <span class="comment">% Get n by 2 array of x,y coordinates.</span>
+        x = xy(:, 2); <span class="comment">% Columns.</span>
+        y = xy(:, 1); <span class="comment">% Rows.</span>
+        topLine = min(x);
+        bottomLine = max(x);
+        leftColumn = min(y);
+        rightColumn = max(y);
+        width = bottomLine - topLine + 1;
+        height = rightColumn - leftColumn + 1;
+        crpimg = imcrop(abs(shim), [topLine, leftColumn, width, height]);
+        crpimg_angle = imcrop(angle(shim), [topLine, leftColumn, width, height]);
+    <span class="keyword">end</span>
+
+    <span class="keyword">function</span> DisplayShim(mask_shm,shim,shim_name)
+        panel = findall(0,<span class="string">'Parent'</span>,imagePanelGroup,<span class="string">'Title'</span>,shim_name);
+        axes_abs = findall(0,<span class="string">'Parent'</span>,panel,<span class="string">'Tag'</span>,<span class="string">'abs(shim)'</span>);
+        axes_angle = findall(0,<span class="string">'Parent'</span>,panel,<span class="string">'Tag'</span>,<span class="string">'angle(shim)'</span>);
+        inhomogeneity_label = findall(0,<span class="string">'Parent'</span>,panel,<span class="string">'Type'</span>,<span class="string">'uiLabel'</span>,<span class="string">'Tag'</span>,<span class="string">'inhomogeneity'</span>);
+        efficiency_label = findall(0,<span class="string">'Parent'</span>,panel,<span class="string">'Type'</span>,<span class="string">'uiLabel'</span>,<span class="string">'Tag'</span>,<span class="string">'efficiency'</span>);
+        <span class="keyword">if</span>(isempty(panel))
+            pos = imagePanelGroup.Children(1).Position(1);
+            <span class="keyword">if</span>(~isempty(imagePanelGroup.Children(1))&amp;&amp; isFirstShim == 0)
+                pos = pos+400;
+            <span class="keyword">else</span>
+                pos = pos+310;
+            <span class="keyword">end</span>
+            panel = uipanel(<span class="string">'Parent'</span>,imagePanelGroup,<span class="string">'Title'</span>,shim_name,<span class="string">'FontSize'</span>,18,<span class="string">'Position'</span>,[pos 5 300 390],<span class="string">'Tag'</span>,<span class="string">'Shim'</span>);
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>(isempty(axes_abs) &amp;&amp; isempty(axes_angle))
+            axes_abs = uiaxes(panel,<span class="string">'Position'</span>,[0 0 185 390],<span class="string">'Box'</span>,<span class="string">'off'</span>,<span class="string">'XTickLabel'</span>,[],<span class="string">'XTick'</span>,[],<span class="string">'YTickLabel'</span>,[],<span class="string">'YTick'</span>,[],<span class="string">'Tag'</span>,<span class="string">'abs(shim)'</span>);
+            axes_angle = uiaxes(panel,<span class="string">'Position'</span>,[155 0 185 390],<span class="string">'Box'</span>,<span class="string">'off'</span>,<span class="string">'XTickLabel'</span>,[],<span class="string">'XTick'</span>,[],<span class="string">'YTickLabel'</span>,[],<span class="string">'YTick'</span>,[],<span class="string">'Tag'</span>,<span class="string">'angle(shim)'</span>);
+            inhomogeneity_label = uilabel(<span class="string">'Position'</span>,[50 30 200 30],<span class="string">'Parent'</span>,panel,<span class="string">'FontSize'</span>,14,<span class="string">'FontWeight'</span>,<span class="string">'bold'</span>,<span class="string">'FontColor'</span>,<span class="string">'[0 0.4470 0.7410]'</span>,<span class="string">'Tag'</span>,<span class="string">'inhomogeneity'</span>);
+            efficiency_label = uilabel(<span class="string">'Position'</span>,[50 0 200 30],<span class="string">'Parent'</span>,panel,<span class="string">'FontSize'</span>,14,<span class="string">'FontWeight'</span>,<span class="string">'bold'</span>,<span class="string">'FontColor'</span>,<span class="string">'[0 0.4470 0.7410]'</span>,<span class="string">'Tag'</span>,<span class="string">'efficiency'</span>);
+        <span class="keyword">end</span>
+
+        <span class="comment">%Calculate Differences &amp; Inhomogeneity</span>
+        diff = abs(shim(mask_shm)) - mean(abs(shim(mask_shm)));
+        inhomogeneity = sqrt(mean(diff.^2))./mean(abs(shim(mask_shm)));
+        text1 = sprintf(<span class="string">'Inhomogeneity = %s'</span>,num2str(inhomogeneity));
+        set(inhomogeneity_label,<span class="string">'Text'</span>,text1);
+
+        <span class="comment">%Calculate Efficiency</span>
+        init_pos = find(de2bi(gui_ROI.roi_result.SelectedLayers)==1,1,<span class="string">'first'</span>);
+        default_b1 = shim(:,:,init_pos);
+        b1_PO = shimList_B1p(:,:,init_pos,3); <span class="comment">%Phase_Only</span>
+        efficiency = mean(abs(default_b1(mask_shm(:,:,init_pos))))./mean(abs(b1_PO(mask_shm(:,:,init_pos))))
+        text2 = sprintf(<span class="string">'Efficiency = %s'</span>,num2str(efficiency));
+        set(efficiency_label,<span class="string">'Text'</span>,text2);
+
+        <span class="comment">%Display Info</span>
+        <span class="comment">%[crpimg,crpimg_angle]=CropShimImg(shim(:,:,1));</span>
+        <span class="comment">%imshow(crpimg,[],'Parent',axes_abs); hold(axes,'on');</span>
+        <span class="comment">%imshow(crpimg_angle,[],'Parent',axes_angle); hold(axes,'off');</span>
+        imshow(shim(:,:,1),[],<span class="string">'Parent'</span>,axes_abs); hold(axes,<span class="string">'on'</span>);
+        imshow(angle(shim(:,:,1)),[],<span class="string">'Parent'</span>,axes_angle); hold(axes,<span class="string">'off'</span>);
+        close(gcf);<span class="comment">%Close unknown figure</span>
+    <span class="keyword">end</span>
+
+    <span class="keyword">function</span> PlotShimBar(shim,shim_name)
+        gui = findall(0,<span class="string">'Title'</span>,<span class="string">'Applied Shim'</span>);
+        panel = findall(0,<span class="string">'Parent'</span>,gui,<span class="string">'Title'</span>,shim_name);
+        axes = findall(0,<span class="string">'Parent'</span>,panel);
+        <span class="keyword">if</span>(isempty(gui))
+            gui = uitab(imageTabGroup, <span class="string">'Title'</span>, <span class="string">'Applied Shim'</span>);
+            <span class="comment">%Slider to update shim figures</span>
+            uilabel(<span class="string">'Position'</span>,[50 200 200 30],<span class="string">'Text'</span>,<span class="string">'Slice Controller'</span>,<span class="string">'Parent'</span>,gui,<span class="string">'FontSize'</span>,14,<span class="string">'FontWeight'</span>,<span class="string">'bold'</span>,<span class="string">'FontColor'</span>,<span class="string">'[.1 .1 .1 .1]'</span>);
+            uislider(gui,<span class="string">'ValueChangedFcn'</span>,@(sld,event)callbkShimSlider(event),<span class="string">'Limit'</span>,[1 imageData.NumSlice],<span class="string">'Position'</span>, [100 170 250 3],<span class="string">'MinorTicks'</span>,[],<span class="string">'FontSize'</span>,14);
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>(isempty(panel))
+            panel = uipanel(gui,<span class="string">'Title'</span>,shim_name,<span class="string">'FontSize'</span>,12,<span class="string">'Position'</span>,[pos 0 250 250]);
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>(isempty(axes))
+            axes = uiaxes(panel,<span class="string">'Position'</span>,[0 0 250 250],<span class="string">'Box'</span>,<span class="string">'off'</span>,<span class="string">'XTickLabel'</span>,{<span class="string">'1'</span> <span class="string">'2'</span> <span class="string">'3'</span> <span class="string">'4'</span> <span class="string">'5'</span> <span class="string">'6'</span> <span class="string">'7'</span> <span class="string">'8'</span>},<span class="string">'XTick'</span>,[],<span class="string">'YTick'</span>,[],<span class="string">'YLim'</span>,[-1 1]);
+        <span class="keyword">end</span>
+        y_categories = {<span class="string">'360^{\circ}'</span> <span class="string">'180^{\circ}'</span> <span class="string">'0'</span> <span class="string">'0.5'</span> <span class="string">'1'</span>};
+        set(axes,<span class="string">'YTickLabel'</span>,y_categories);
+        [abs(shim)./max(abs(shim)),(angle(shim)+pi).*180./pi]
+        bar(axes,abs(shim)./max(abs(shim)),0.4,<span class="string">'FaceColor'</span>,[0 0.4470 0.7410]);
+        hold(axes,<span class="string">'on'</span>);
+        bar(axes,-((angle(shim)+pi)/2/pi),0.4,<span class="string">'FaceColor'</span>,[0.3010 0.7450 0.9330]);
+        hold(axes,<span class="string">'off'</span>);
+    <span class="keyword">end</span>
+
+    <span class="comment">%Remove image from imagePanel</span>
+    <span class="keyword">function</span> RemoveImage(name)
+        gui_image = findall(0,<span class="string">'Type'</span>,<span class="string">'uipanel'</span>,<span class="string">'Title'</span>,name);
+        gui_tab = findall(0,<span class="string">'Type'</span>,<span class="string">'uitab'</span>,<span class="string">'Title'</span>,name);
+        delete(gui_image);
+        delete(gui_tab);
+    <span class="keyword">end</span>
+
+    <span class="comment">%Display image on imagePanel</span>
+    <span class="keyword">function</span> DisplayImage(name,img)
+        <span class="comment">%Create a panel</span>
+        p = uipanel(imagePanelGroup,<span class="string">'Title'</span>,name,<span class="string">'FontSize'</span>,18,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>,<span class="string">'Position'</span>, [0 40 340 360]);
+        mainEvent = [mainEvent,name];
+        p_axes = uiaxes(p,<span class="string">'Box'</span>,<span class="string">'off'</span>,<span class="string">'Position'</span>,[-20 -50 390 390],<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+        imshow(img,<span class="string">'Parent'</span>,p_axes);
+    <span class="keyword">end</span>
+
+    <span class="keyword">function</span> callbkAngleImage(event)
+        <span class="keyword">if</span> isempty(findall(0,<span class="string">'Parent'</span>,imagePanelGroup,<span class="string">'Title'</span>,<span class="string">'Origin'</span>))
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+        val = round(slider_channel.Value);
+        img = imageData.ImageSignal;
+        event.Value
+        <span class="keyword">if</span> event.Value == true
+            img = angle(img);
+        <span class="keyword">end</span>
+        img = abs(img(:,:,val))./max(max(abs(img(:,:,val))));<span class="comment">%Default</span>
+
+        <span class="comment">%Remove current Image</span>
+        RemoveImage(<span class="string">'Origin'</span>);
+        <span class="comment">%Add Angle Image</span>
+        DisplayImage(<span class="string">'Origin'</span>,img);
+    <span class="keyword">end</span>
+
+    <span class="comment">%LoadFile</span>
+     <span class="keyword">function</span> callbkInputCN(~,folderPath,folderContent,index_divide,folderSize)
+        [ImagSig,numChannel,numSlice] = LoadFile(folderPath,{folderContent(:).name},index_divide,CN.Value);
+        delete(channel_fig);
+        <span class="keyword">if</span> size(ImagSig)~=0
+            imageData.ImageSignal = ImagSig;
+            imageData.NumChannel = numChannel;
+            imageData.NumSlice = numSlice;
+            set(slider_channel,<span class="string">'Limit'</span>,[1 numChannel]);
+            <span class="keyword">if</span> imageData.NumSlice &gt; 1
+                set(slider_layer,<span class="string">'Limit'</span>,[1 numSlice]);
+                set(slider_layer,<span class="string">'Enable'</span>,<span class="string">'on'</span>);
+            <span class="keyword">else</span>
+                set(slider_layer,<span class="string">'Enable'</span>,<span class="string">'off'</span>);
+            <span class="keyword">end</span>
+
+            img = abs(ImagSig(:,:,1))./max(max(abs(ImagSig(:,:,1))));<span class="comment">%Default</span>
+
+            <span class="comment">%Tab UI</span>
+            DisplayImage(<span class="string">'Origin'</span>,img);
+
+            str_folder = strcat(<span class="string">'Folder Path: '</span>,folderPath);
+            str_size = strcat(<span class="string">'Total Number of File: '</span>, num2str(folderSize));
+            str_date = strcat(<span class="string">'Date: '</span>, folderContent(1).date);
+            ftype = strsplit(folderContent(1).name,<span class="string">'.'</span>);
+            str_format = strcat(<span class="string">'Format: '</span>,ftype(2));
+            DisplayBasicInfo(<span class="string">'Origin'</span>,str_folder,str_size,str_date,str_format);
+
+        <span class="keyword">else</span>
+            uialert(f,<span class="string">'This folder is exceed/incompleted'</span>,<span class="string">'Invalid Folder'</span>);
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    <span class="comment">%Refresh</span>
+    <span class="keyword">function</span> callbkRefresh(~)
+
+    <span class="keyword">end</span>
+
+    <span class="comment">%Save</span>
+    <span class="keyword">function</span> callbkSave(~)
+
+    <span class="keyword">end</span>
+
+    <span class="comment">%Export HELPER</span>
+    <span class="keyword">function</span> exportHelper(shim)
+        NumPulses = 1;
+        p_tau = 500;  <span class="comment">% pulse duration in us</span>
+        extfname = [<span class="string">'pTXComposite_KT_P'</span>, num2str(NumPulses), <span class="string">' '</span>, strrep(datestr(now), <span class="string">' '</span>, <span class="string">'_'</span>)];
+        extfname = strrep(extfname, <span class="string">':'</span>,<span class="string">'_'</span>);
+        extfname = strrep(extfname, <span class="string">' '</span>,<span class="string">'_'</span>);
+        extfname = strrep(extfname, <span class="string">'-'</span>,<span class="string">'_'</span>);
+        emptyfname = [<span class="string">'pTX composite pulse KT '</span>,num2str(NumPulses), <span class="string">' '</span>, strrep(datestr(now), <span class="string">' '</span>, <span class="string">'_'</span>)];
+        dopt.type=<span class="string">'SBBCompPulses'</span>;
+        dopt.fileName=extfname;
+        dopt.NominalFlipAngle=90;
+        dopt.SampleTime=p_tau.*1e6; <span class="comment">%divide the length of RF pulse and scale to us</span>
+        dopt.PulseName=emptyfname;
+        dopt.Comment=<span class="string">'OLS spokes'</span>;
+        <span class="comment">% afGradient = [Gm_opt; zeros(1, NumPulses-1)];</span>
+        <span class="comment">% afRFPulse = reshape(V_opt, NC, NumPulses);</span>
+        afGradient = [];
+        afRFPulse = shim; <span class="comment">% REPLACE WITH SHIM (e.g., shim2 shim4)</span>
+        create_pTXRFPulse3_2( afGradient, afRFPulse, dopt)
+    <span class="keyword">end</span>
+
+    <span class="comment">%Export</span>
+    <span class="keyword">function</span> callbkExport(~)
+        <span class="keyword">if</span> size(shimList)==0
+            uialert(f,<span class="string">'You need to apply shims first.'</span>,<span class="string">'Invalid Action'</span>);
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+        exportHelper(shimList(:,:,1));
+        pause(1);<span class="comment">%Ensure the independent file names</span>
+        exportHelper(shimList(:,:,2));
+        pause(1);<span class="comment">%Ensure the independent file names</span>
+        exportHelper(shimList(:,:,3));
+    <span class="keyword">end</span>
+
+    <span class="keyword">function</span> callbkAddShim(~)
+        gui = findall(0,<span class="string">'Type'</span>,<span class="string">'uipanel'</span>,<span class="string">'Parent'</span>,imagePanelGroup,<span class="string">'Title'</span>,<span class="string">'Origin'</span>);
+        axes = findobj(gui,<span class="string">'-depth'</span>,1);
+
+        <span class="keyword">if</span> ~isempty(get(axes(end),<span class="string">'Tag'</span>)) &amp;&amp; ~isempty(gui_ROI)
+            roi_id = get(axes(end),<span class="string">'Tag'</span>);
+            addpath(genpath(<span class="string">'../Process'</span>));
+            <span class="comment">%Get ROI ID</span>
+            roi_id = sprintf(<span class="string">'roi_%s'</span>,roi_id);
+            mask_shm = evalin(<span class="string">'base'</span>,char(roi_id));
+            roi_layers = de2bi(gui_ROI.roi_result.SelectedLayers,imageData.NumSlice);
+            Fullmask = zeros(size(mask_shm,1),size(mask_shm,2),size(roi_layers,2))
+            <span class="keyword">for</span> ii = 1:size(roi_layers,2)
+                <span class="keyword">if</span> roi_layers(ii)==1
+                    Fullmask(:,:,ii) = mask_shm;
+                <span class="keyword">else</span>
+                    Fullmask(:,:,ii) = zeros(size(mask_shm,1),size(mask_shm,2));
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            [B1p,B1pGauss] = GaussFilter(imageData.ImageSignal,Fullmask,imageData.NumChannel);
+            [shimList_B1p,shimList,mask_shm] = Shim(Fullmask,B1p,B1pGauss,imageData.ImageSignal);
+
+            DisplayShim(mask_shm,shimList_B1p(:,:,:,1),<span class="string">'Shimming within ROI'</span>);
+            isFirstShim = 1;<span class="comment">%Set special position for the fist graph</span>
+            PlotShimBar(shimList(:,:,1),<span class="string">'Shimming within ROI'</span>);
+
+            DisplayShim(mask_shm,shimList_B1p(:,:,:,2),<span class="string">'MLS shimming within ROI'</span>);
+            PlotShimBar(shimList(:,:,2),<span class="string">'MLS shimming within ROI'</span>);
+
+            DisplayShim(mask_shm,shimList_B1p(:,:,:,3),<span class="string">'Phase-only shimming within ROI'</span>);
+            PlotShimBar(shimList(:,:,3),<span class="string">'Phase-only shimming within ROI'</span>);
+
+        <span class="keyword">else</span>
+            uialert(f,<span class="string">'ROI needed'</span>,<span class="string">'Invalid Action'</span>);
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+     <span class="keyword">end</span>
+
+    <span class="comment">%Patient</span>
+    <span class="keyword">function</span> callbkPatient(~)
+        RemoveImage(<span class="string">'Origin'</span>);
+        imageData = ImageData;
+        eventName = num2str(datenum(clock));
+        eventName = strrep(eventName,<span class="string">'.'</span>,<span class="string">'_'</span>);<span class="comment">%Generate Event Name</span>
+        imageData.ID = eventName;
+        folderPath = uigetdir();
+        disp(folderPath);
+        <span class="keyword">if</span> folderPath == 0
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+        folderContent = dir(folderPath);
+        fileNames = regexpi({folderContent.name},<span class="string">'.*IMA|.*DICM|.*DCM'</span>,<span class="string">'match'</span>); <span class="comment">%Check file type</span>
+        fileNames = fileNames(~cellfun(<span class="string">'isempty'</span>,fileNames)); <span class="comment">%Remove dir element</span>
+        folderSize = size(fileNames,2); <span class="comment">%Num of IMA/DICM files</span>
+        index_divide = folderSize/2;
+        <span class="keyword">if</span> folderSize &lt; 2 || floor(index_divide)~=index_divide
+            uialert(f,<span class="string">'This folder is exceed/incompleted'</span>,<span class="string">'Invalid Folder'</span>);
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+        folderContent = folderContent(~ismember({folderContent.name},{<span class="string">'.'</span>,<span class="string">'..'</span>}));
+
+        <span class="comment">%Acquire Channel from Users</span>
+        channel_fig = uifigure(<span class="string">'Position'</span>, [0 0 300 100],<span class="string">'Name'</span>,<span class="string">'How many channel did your files use?'</span>);
+        CN = uieditfield(channel_fig,<span class="string">'numeric'</span>,<span class="string">'Position'</span>, [100 50 50 30],<span class="string">'Limits'</span>,[1 20],<span class="string">'Value'</span>, 8);
+        uibutton(channel_fig,<span class="string">'ButtonPushedFcn'</span>, @(btn,event)callbkInputCN(btn,folderPath,folderContent,index_divide,folderSize),<span class="string">'BackgroundColor'</span>,<span class="string">'w'</span>,<span class="string">'Text'</span>, <span class="string">'Confirm'</span>,<span class="string">'Position'</span>, [155 50 50 30]);
+    <span class="keyword">end</span>
+
+    <span class="comment">%Shim Lists</span>
+    <span class="keyword">function</span> callbkShimLists(~)
+        gui = findall(0,<span class="string">'Name'</span>,<span class="string">'Shim Lists'</span>);
+        <span class="keyword">if</span> isempty(gui)
+          gui_ShimLists();
+        <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+
+    <span class="comment">%ROI ToolBox</span>
+    <span class="keyword">function</span> callbkROIToolBox(~)
+        gui = findall(0,<span class="string">'Name'</span>,<span class="string">'ROI Tool Box'</span>);
+        image_panel = findall(0,<span class="string">'Title'</span>,<span class="string">'Origin'</span>,<span class="string">'Type'</span>,<span class="string">'uipanel'</span>);
+        <span class="keyword">if</span> ~isempty(gui) || isempty(image_panel)
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+        gui = findall(0,<span class="string">'Type'</span>,<span class="string">'uipanel'</span>,<span class="string">'Title'</span>,<span class="string">'Origin'</span>);
+        axes = findobj(gui,<span class="string">'-depth'</span>,1);
+        imaga = findobj(axes(end).Children,<span class="string">'Type'</span>,<span class="string">'Image'</span>); <span class="comment">%get Image</span>
+        gui_ROI = ROI_gui(imaga.CData,imageData.ROI);
+        <span class="comment">%gui_ROI = CROIEditor(imaga.CData);</span>
+    <span class="keyword">end</span>
+
+    <span class="comment">%Analysis</span>
+    <span class="keyword">function</span> callbkAnalysis(~)
+        gui = findall(0,<span class="string">'Name'</span>,<span class="string">'Add Analysis'</span>);
+        <span class="keyword">if</span> isempty(gui)
+          gui_Analysis();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    <span class="comment">%Errors</span>
+    <span class="keyword">function</span> callbkErrors(~)
+
+    <span class="keyword">end</span>
+
+    <span class="comment">%Guide</span>
+    <span class="keyword">function</span> callbkGuide(~)
+
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Error using uibutton (line 59)
+You have specified a file that cannot be found or is not an image.
+Specify a file name that is on the MATLAB path, or use a full or relative path.
+
+Error in gui_Main (line 33)
+    uibutton(tab_home,'ButtonPushedFcn', @(btn,event)callbkPatient(btn),'BackgroundColor',[.1 .1 .1],'Text', '','Icon','../UIimg/patient.png','Position', [50 20 50 50]);
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function gui_Main
+    %Variables
+    f = uifigure('Position', [0 0 1280 768],'Name','Shim Tool');
+    imageData = [];
+    gui_ROI = [];
+    pickLayer_list = {};
+    mainEvent = [];
+    isFirstShim = 0;
+    pos = 0; %pos for Shim bar graph and images
+    CN = []; %input of channel
+    channel_fig =[];
+    current_layer = 1;
+    current_channel = 1;
+    shimList = [];
+    shimList_B1p =[];
+    mask_shm = [];
+    %Add to class:ImageData
+    addpath(genpath('../Process'));
+    
+    %TopTab
+    topGroup = uitabgroup(f,'Position',[0 668 1280 100]);
+    
+    tab_home = uitab(topGroup, 'Title', 'HOME');
+    tab_home.BackgroundColor = [.1 .1 .1];
+    
+    tab_editor = uitab(topGroup, 'Title', 'EDITOR');
+    tab_editor.BackgroundColor = [.1 .1 .1];
+    
+    tab_help = uitab(topGroup, 'Title', 'HELP');
+    tab_help.BackgroundColor = [.1 .1 .1];
+
+    %TopTab______HOME
+    uibutton(tab_home,'ButtonPushedFcn', @(btn,event)callbkPatient(btn),'BackgroundColor',[.1 .1 .1],'Text', '','Icon','../UIimg/patient.png','Position', [50 20 50 50]);
+    uilabel(tab_home,'HorizontalAlignment','center','FontColor','w','Text','Patient','Position', [50 -30 50 50]);
+
+    uibutton(tab_home,'ButtonPushedFcn', @(btn,event)callbkRefresh(btn),'BackgroundColor',[.1 .1 .1],'Text', '','Icon', '../UIimg/refresh.png','Position', [200 20 50 50]);
+    uilabel(tab_home,'HorizontalAlignment','center','FontColor','w','Text','Refresh','Position', [200 -30 50 50]);
+    
+    uibutton(tab_home,'ButtonPushedFcn', @(btn,event)callbkSave(btn),'BackgroundColor',[.1 .1 .1],'Text', '','Icon', '../UIimg/save.png','Position', [350 20 50 50]);
+    uilabel(tab_home,'HorizontalAlignment','center','FontColor','w','Text','Save','Position', [350 -30 50 50]);
+
+    uibutton(tab_home,'ButtonPushedFcn', @(btn,event)callbkExport(btn),'BackgroundColor',[.1 .1 .1],'Text', '','Icon', '../UIimg/export.png','Position', [500 20 50 50]);
+    uilabel(tab_home,'HorizontalAlignment','center','FontColor','w','Text','Export','Position', [500 -30 50 50]);
+        
+    %TopTab______EDITOR
+    uibutton(tab_editor,'ButtonPushedFcn', @(btn,event)callbkAddShim(btn),'BackgroundColor',[.1 .1 .1],'Text', '','Icon','../UIimg/add.png','Position', [50 20 50 50]);
+    uilabel(tab_editor,'FontColor','w','Text','Add Shim','Position', [50 -30 100 50]);
+
+    uibutton(tab_editor,'ButtonPushedFcn', @(btn,event)callbkShimLists(btn),'BackgroundColor',[.1 .1 .1],'Text', '','Icon', '../UIimg/list.png','Position', [200 20 50 50]);
+    uilabel(tab_editor,'FontColor','w','Text','Shim Lists','Position', [200 -30 100 50]);
+    
+    uibutton(tab_editor,'ButtonPushedFcn', @(btn,event)callbkROIToolBox(btn),'BackgroundColor',[.1 .1 .1],'Text', '','Icon', '../UIimg/drawroi.png','Position', [350 20 50 50]);
+    uilabel(tab_editor,'FontColor','w','Text','Draw ROI','Position', [350 -30 100 50]);
+
+    uibutton(tab_editor,'ButtonPushedFcn', @(btn,event)callbkAnalysis(btn),'BackgroundColor',[.1 .1 .1],'Text', '','Icon', '../UIimg/compare.png','Position', [500 20 50 50]);
+    uilabel(tab_editor,'FontColor','w','Text','Analysis','Position', [500 -30 100 50]);
+
+    %TopTab______HELP
+    uibutton(tab_help,'ButtonPushedFcn', @(btn,event)callbkErrors(btn),'BackgroundColor',[.1 .1 .1],'Text', '','Icon', '../UIimg/error.png','Position', [50 20 50 50]);
+    uilabel(tab_help,'HorizontalAlignment','center','FontColor','w','Text','Errors','Position', [50 -30 50 50]);
+
+    uibutton(tab_help,'ButtonPushedFcn', @(btn,event)callbkGuide(btn),'BackgroundColor',[.1 .1 .1],'Text', '','Icon', '../UIimg/guide.png','Position', [200 20 50 50]);
+    uilabel(tab_help,'HorizontalAlignment','center','FontColor','w','Text','Guide','Position', [200 -30 50 50]);
+
+    %ImagePanel
+    imagePanelGroup = uipanel(f,'Position', [0 270 1280 400],'Tag','imagePanelGroup');
+        %Channel
+        uilabel(imagePanelGroup,'FontColor','k','Text','Channel','Position', [30 10 50 20]);
+        channel = uitextarea(imagePanelGroup,'Position', [80 10 30 20],'ValueChangedFcn',@(textarea,event) callbkChannel1(textarea));
+        slider_channel = uislider(imagePanelGroup,'ValueChangedFcn',@(sld,event)callbkChannel2(event),'Limit',[1 8],'Position', [120 30 200 3],'MinorTicks',[]);
+        %Layer(s)
+        uilabel(imagePanelGroup,'FontColor','k','Text','Layer(s): ','Position', [350 360 50 20]);
+        layerFrom = uitextarea(imagePanelGroup,'Position', [350 340 30 20],'ValueChangedFcn',@(textarea,event) callbkLayer1(textarea));
+        slider_layer = uislider(imagePanelGroup,'ValueChangingFcn',@(sld,event)callbkLayer(event),'Limit',[1 8],'Position', [350 110 200 3],'Orientation','Vertical');
+        button_angleState = uibutton(imagePanelGroup,'state','ValueChangedFcn', @(value,event)callbkAngleImage(event),'BackgroundColor',[1 1 1],'Text','','Icon', '../UIimg/angleImg.png','Position', [340 10 50 50]);
+     imageTabGroup = uitabgroup(f,'Position',[0, 0, 1280 270]); 
+    
+    %Display Channel image on imagePanel
+    function DisplayChannelImage(value)
+        if isempty(imageData)
+            return;
+        end
+        gui = findall(0,'Type','uipanel','Title','Origin');
+        axes = findobj(gui,'-depth',1);
+        img = imageData.ImageSignal; 
+        if button_angleState.Value == 1
+           img = angle(img);
+        end
+        current_channel = value;
+        Out = abs(img(:,:,current_layer,value))./max(max(abs(img(:,:,current_layer,value))));
+        imshow(Out,'Parent',axes(end));
+    end
+    
+     %Display Slice image on imagePanel
+    function DisplayLayerImage(val)
+        if isempty(imageData)
+            return;
+        end
+        gui = findall(0,'Type','uipanel','Title','Origin');
+        axes = findobj(gui,'-depth',1);
+        img = imageData.ImageSignal;
+        %size(img)
+        if button_angleState.Value == 1
+           img = angle(img);
+        end
+        current_layer = val;
+        Out = abs(img(:,:,val,round(slider_channel.Value)))./max(max(abs(img(:,:,val,round(slider_channel.Value)))));
+        %Out = Out(:,:,round(slider_channel.Value));
+        imshow(Out,'Parent',axes(end));
+        if ~isempty(gui_ROI)
+            layer_roi = de2bi(gui_ROI.roi_result.SelectedLayers,imageData.NumSlice);
+            if(layer_roi(val)==1)
+                % Mask traces
+                colors=prism;
+                [B,L] = bwboundaries(gui_ROI.roi_result.Mask);
+                hold(axes(end),'on');
+                for k = 1:length(B)
+                   boundary = B{k};
+                   cidx = mod(k,length(colors))+1;
+                   plot(axes(end),boundary(:,2), boundary(:,1),'Color',colors(cidx,:,:), 'LineWidth', 2);
+                   %randomize text position for better visibility
+                   rndRow = ceil(length(boundary)/(mod(rand*k,7)+1));
+                   col = boundary(rndRow,2); row = boundary(rndRow,1);
+                   h = text(col+1, row-1,num2str(L(row,col)),'Parent',axes(end));
+                   if(k==length(B))
+                       text(5, 5,gui_ROI.roi_result.ID,'Parent',axes(end),'Color',colors(cidx,:,:));
+                   end
+                   set(h,'Color',colors(cidx,:,:),'FontSize',14,'FontWeight','bold');
+                end 
+                hold(axes(end),'off');
+            end
+        end
+        getShimPanels = findall(0,'Parent',imagePanelGroup,'Tag','Shim','Type','uiPanel');
+        if ~isempty(getShimPanels)
+            helper_ShimSlider(val,getShimPanels);
+        end
+    end
+
+    function callbkLayer1(textarea)
+        if isempty(imageData)
+            return;
+        end
+        value = str2double(textarea.Value);
+        if value < slider_layer.Limits(1) || value > slider_layer.Limits(2)
+            uialert(f,'Please check the range of layer','Invalid Layer');
+            return;
+        end
+        slider_layer.Value = round(value);
+        DisplayLayerImage(round(slider_layer.Value));
+    end
+
+    %Display Layer image with current Channel on imagePanel
+    function callbkLayer(event)
+        if isempty(imageData)
+            return;
+        end
+        val = round(event.Value);
+        layerFrom.Value = num2str(val);
+        layerTo.Value = num2str(val);
+        DisplayLayerImage(val);
+    end
+
+    
+
+    function callbkChannel1(textarea)
+        if isempty(imageData)
+            return;
+        end
+        value = str2double(textarea.Value);
+        if value < slider_channel.Limits(1) || value > slider_channel.Limits(2)
+            uialert(f,'Please check the range of channel','Invalid Channel');
+            return;
+        end
+        slider_channel.Value = round(value);
+        DisplayChannelImage(round(slider_channel.Value));
+    end
+
+    function callbkChannel2(event)
+        if isempty(imageData)
+            return;
+        end
+        channel.Value = num2str(round(event.Value));
+        DisplayChannelImage(round(event.Value));
+    end
+
+    % Layer Selected callback
+    function updateROIonLayers(src,event) 
+         pickLayer_list = src.Items;
+         pickLayer_list = ismember(pickLayer_list,src.Value);
+    end
+
+    % Layer Updated callback
+    function callbkUpdateROIonLayers(src,event) 
+        if ~isempty(pickLayer_list)
+            gui_ROI.roi_result.SelectedLayers = bi2de(pickLayer_list==1)
+        end
+        callbkAddShim();
+    end
+
+    %Display patient's basic information on imagePanel
+    function DisplayBasicInfo(name,str_folder,str_size,str_date,str_format)
+        t = findall(0,'Parent',imageTabGroup, 'Title', name);
+        if ~isempty(t)
+            delete(t);
+        end
+        t = uitab(imageTabGroup, 'Title', name);
+        lbox = uilistbox(t,'Position',[50 120 500 100]);
+        str_ID = strcat('ID: ',imageData.ID);
+        str_Channel = strcat('Number Of Channel: ',num2str(imageData.NumChannel));
+        lbox.Items = {str_ID, str_Channel, char(str_folder),char(str_size),char(str_date),char(str_format)};
+        roi_lbox = uilistbox(t,'ValueChangedFcn', @updateROIonLayers,'Position',[600 70 100 150]); 
+        for ii = 1 : slider_layer.Limits(2)
+             cell = strcat('Layer_',num2str(ii));
+             roi_lbox.Items{ii} = cell;
+        end
+        roi_lbox.Multiselect = 'on';
+        uibutton(t,'ButtonPushedFcn', @(btn,event)callbkUpdateROIonLayers(btn),'Position', [600 20 100 50],'Text','Update ROIs');
+    end
+
+    function helper_ShimSlider(val,getShimPanels)
+         numShim = size(getShimPanels,1);
+         for ii = 1:numShim
+            get_leftAxes = findall(0,'Parent',getShimPanels(numShim+1-ii),'Tag','abs(shim)');
+            get_rightAxes = findall(0,'Parent',getShimPanels(numShim+1-ii),'Tag','angle(shim)');
+            panel = findall(0,'Parent',getShimPanels(numShim+1-ii));
+            efficiency_label = panel(1);
+            inhomogeneity_label = panel(2);
+            shim = shimList_B1p(:,:,:,ii);
+           
+            %Calculate Differences & Inhomogeneity
+            diff = abs(shim(mask_shm)) - mean(abs(shim(mask_shm)));
+            inhomogeneity = sqrt(mean(diff.^2))./mean(abs(shim(mask_shm)))
+            text1 = sprintf('Inhomogeneity = %s',num2str(inhomogeneity));
+            set(inhomogeneity_label,'Text',text1);
+            
+            %Calculate Efficiency
+            b1_PO = shimList_B1p(:,:,val,3);%Phase_Only
+            b1_shim = shim(:,:,val);
+            efficiency = mean(abs(b1_shim(mask_shm(:,:,val))))./mean(abs(b1_PO(mask_shm(:,:,val))))
+            
+            text2 = sprintf('Efficiency = %s',num2str(efficiency));
+            set(efficiency_label,'Text',text2);
+            %[crpimg,crpimg_angle]=CropShimImg(shim(:,:,val));
+            %imshow(crpimg,[],'Parent',get_leftAxes); hold(axes,'on'); 
+            %imshow(crpimg_angle,[],'Parent',get_rightAxes); hold(axes,'off');
+            imshow(abs(shim(:,:,val)),[],'Parent',get_leftAxes); hold(axes,'on'); 
+            imshow(angle(shim(:,:,val)),[],'Parent',get_rightAxes); hold(axes,'off');
+        end
+        close(gcf);
+    end
+
+    %ShimSlider Helper
+    function callbkShimSlider(event)
+        val = round(event.Value);
+        getShimPanels = findall(0,'Parent',imagePanelGroup,'Tag','Shim','Type','uiPanel');
+        helper_ShimSlider(val,getShimPanels);
+    end
+
+    function [crpimg,crpimg_angle]=CropShimImg(shim)
+        structBoundaries = bwboundaries(abs(shim));
+        xy=structBoundaries{1}; % Get n by 2 array of x,y coordinates.
+        x = xy(:, 2); % Columns.
+        y = xy(:, 1); % Rows.
+        topLine = min(x);
+        bottomLine = max(x);
+        leftColumn = min(y);
+        rightColumn = max(y);
+        width = bottomLine - topLine + 1;
+        height = rightColumn - leftColumn + 1;
+        crpimg = imcrop(abs(shim), [topLine, leftColumn, width, height]);
+        crpimg_angle = imcrop(angle(shim), [topLine, leftColumn, width, height]);  
+    end
+
+    function DisplayShim(mask_shm,shim,shim_name)
+        panel = findall(0,'Parent',imagePanelGroup,'Title',shim_name);
+        axes_abs = findall(0,'Parent',panel,'Tag','abs(shim)');
+        axes_angle = findall(0,'Parent',panel,'Tag','angle(shim)');
+        inhomogeneity_label = findall(0,'Parent',panel,'Type','uiLabel','Tag','inhomogeneity');
+        efficiency_label = findall(0,'Parent',panel,'Type','uiLabel','Tag','efficiency');
+        if(isempty(panel))
+            pos = imagePanelGroup.Children(1).Position(1);
+            if(~isempty(imagePanelGroup.Children(1))&& isFirstShim == 0)
+                pos = pos+400;
+            else
+                pos = pos+310;
+            end
+            panel = uipanel('Parent',imagePanelGroup,'Title',shim_name,'FontSize',18,'Position',[pos 5 300 390],'Tag','Shim');
+        end
+        if(isempty(axes_abs) && isempty(axes_angle))
+            axes_abs = uiaxes(panel,'Position',[0 0 185 390],'Box','off','XTickLabel',[],'XTick',[],'YTickLabel',[],'YTick',[],'Tag','abs(shim)');
+            axes_angle = uiaxes(panel,'Position',[155 0 185 390],'Box','off','XTickLabel',[],'XTick',[],'YTickLabel',[],'YTick',[],'Tag','angle(shim)');
+            inhomogeneity_label = uilabel('Position',[50 30 200 30],'Parent',panel,'FontSize',14,'FontWeight','bold','FontColor','[0 0.4470 0.7410]','Tag','inhomogeneity');
+            efficiency_label = uilabel('Position',[50 0 200 30],'Parent',panel,'FontSize',14,'FontWeight','bold','FontColor','[0 0.4470 0.7410]','Tag','efficiency');
+        end
+        
+        %Calculate Differences & Inhomogeneity
+        diff = abs(shim(mask_shm)) - mean(abs(shim(mask_shm)));
+        inhomogeneity = sqrt(mean(diff.^2))./mean(abs(shim(mask_shm)));
+        text1 = sprintf('Inhomogeneity = %s',num2str(inhomogeneity));
+        set(inhomogeneity_label,'Text',text1);
+        
+        %Calculate Efficiency
+        init_pos = find(de2bi(gui_ROI.roi_result.SelectedLayers)==1,1,'first');
+        default_b1 = shim(:,:,init_pos);
+        b1_PO = shimList_B1p(:,:,init_pos,3); %Phase_Only
+        efficiency = mean(abs(default_b1(mask_shm(:,:,init_pos))))./mean(abs(b1_PO(mask_shm(:,:,init_pos))))
+        text2 = sprintf('Efficiency = %s',num2str(efficiency));
+        set(efficiency_label,'Text',text2);
+        
+        %Display Info
+        %[crpimg,crpimg_angle]=CropShimImg(shim(:,:,1));
+        %imshow(crpimg,[],'Parent',axes_abs); hold(axes,'on'); 
+        %imshow(crpimg_angle,[],'Parent',axes_angle); hold(axes,'off');
+        imshow(shim(:,:,1),[],'Parent',axes_abs); hold(axes,'on'); 
+        imshow(angle(shim(:,:,1)),[],'Parent',axes_angle); hold(axes,'off');
+        close(gcf);%Close unknown figure
+    end
+
+    function PlotShimBar(shim,shim_name)
+        gui = findall(0,'Title','Applied Shim');
+        panel = findall(0,'Parent',gui,'Title',shim_name);
+        axes = findall(0,'Parent',panel);
+        if(isempty(gui))
+            gui = uitab(imageTabGroup, 'Title', 'Applied Shim');
+            %Slider to update shim figures
+            uilabel('Position',[50 200 200 30],'Text','Slice Controller','Parent',gui,'FontSize',14,'FontWeight','bold','FontColor','[.1 .1 .1 .1]');
+            uislider(gui,'ValueChangedFcn',@(sld,event)callbkShimSlider(event),'Limit',[1 imageData.NumSlice],'Position', [100 170 250 3],'MinorTicks',[],'FontSize',14);
+        end
+        if(isempty(panel))
+            panel = uipanel(gui,'Title',shim_name,'FontSize',12,'Position',[pos 0 250 250]);
+        end
+        if(isempty(axes))
+            axes = uiaxes(panel,'Position',[0 0 250 250],'Box','off','XTickLabel',{'1' '2' '3' '4' '5' '6' '7' '8'},'XTick',[],'YTick',[],'YLim',[-1 1]);
+        end
+        y_categories = {'360^{\circ}' '180^{\circ}' '0' '0.5' '1'};
+        set(axes,'YTickLabel',y_categories);
+        [abs(shim)./max(abs(shim)),(angle(shim)+pi).*180./pi]
+        bar(axes,abs(shim)./max(abs(shim)),0.4,'FaceColor',[0 0.4470 0.7410]);
+        hold(axes,'on');
+        bar(axes,-((angle(shim)+pi)/2/pi),0.4,'FaceColor',[0.3010 0.7450 0.9330]);
+        hold(axes,'off');
+    end
+
+    %Remove image from imagePanel
+    function RemoveImage(name)
+        gui_image = findall(0,'Type','uipanel','Title',name);
+        gui_tab = findall(0,'Type','uitab','Title',name);
+        delete(gui_image);
+        delete(gui_tab);
+    end
+    
+    %Display image on imagePanel
+    function DisplayImage(name,img)
+        %Create a panel
+        p = uipanel(imagePanelGroup,'Title',name,'FontSize',18,'BackgroundColor','white','Position', [0 40 340 360]);
+        mainEvent = [mainEvent,name];
+        p_axes = uiaxes(p,'Box','off','Position',[-20 -50 390 390],'BackgroundColor','white');
+        imshow(img,'Parent',p_axes);
+    end
+
+    function callbkAngleImage(event)
+        if isempty(findall(0,'Parent',imagePanelGroup,'Title','Origin'))
+            return;
+        end
+        val = round(slider_channel.Value);
+        img = imageData.ImageSignal; 
+        event.Value
+        if event.Value == true
+            img = angle(img);
+        end
+        img = abs(img(:,:,val))./max(max(abs(img(:,:,val))));%Default
+        
+        %Remove current Image
+        RemoveImage('Origin');
+        %Add Angle Image
+        DisplayImage('Origin',img);
+    end
+
+    %LoadFile 
+     function callbkInputCN(~,folderPath,folderContent,index_divide,folderSize)
+        [ImagSig,numChannel,numSlice] = LoadFile(folderPath,{folderContent(:).name},index_divide,CN.Value);
+        delete(channel_fig);
+        if size(ImagSig)~=0  
+            imageData.ImageSignal = ImagSig;
+            imageData.NumChannel = numChannel;
+            imageData.NumSlice = numSlice;
+            set(slider_channel,'Limit',[1 numChannel]);
+            if imageData.NumSlice > 1
+                set(slider_layer,'Limit',[1 numSlice]);
+                set(slider_layer,'Enable','on');
+            else
+                set(slider_layer,'Enable','off');
+            end
+        
+            img = abs(ImagSig(:,:,1))./max(max(abs(ImagSig(:,:,1))));%Default 
+           
+            %Tab UI
+            DisplayImage('Origin',img);
+             
+            str_folder = strcat('Folder Path: ',folderPath);
+            str_size = strcat('Total Number of File: ', num2str(folderSize));
+            str_date = strcat('Date: ', folderContent(1).date);
+            ftype = strsplit(folderContent(1).name,'.');
+            str_format = strcat('Format: ',ftype(2));
+            DisplayBasicInfo('Origin',str_folder,str_size,str_date,str_format);
+            
+        else
+            uialert(f,'This folder is exceed/incompleted','Invalid Folder');
+            return;
+        end
+    end
+    
+    %Refresh
+    function callbkRefresh(~)
+        
+    end
+
+    %Save
+    function callbkSave(~)
+        
+    end
+    
+    %Export HELPER
+    function exportHelper(shim)
+        NumPulses = 1;
+        p_tau = 500;  % pulse duration in us
+        extfname = ['pTXComposite_KT_P', num2str(NumPulses), ' ', strrep(datestr(now), ' ', '_')];
+        extfname = strrep(extfname, ':','_');
+        extfname = strrep(extfname, ' ','_');
+        extfname = strrep(extfname, '-','_');
+        emptyfname = ['pTX composite pulse KT ',num2str(NumPulses), ' ', strrep(datestr(now), ' ', '_')];
+        dopt.type='SBBCompPulses';
+        dopt.fileName=extfname;
+        dopt.NominalFlipAngle=90;
+        dopt.SampleTime=p_tau.*1e6; %divide the length of RF pulse and scale to us
+        dopt.PulseName=emptyfname;
+        dopt.Comment='OLS spokes';
+        % afGradient = [Gm_opt; zeros(1, NumPulses-1)];
+        % afRFPulse = reshape(V_opt, NC, NumPulses);
+        afGradient = [];
+        afRFPulse = shim; % REPLACE WITH SHIM (e.g., shim2 shim4)
+        create_pTXRFPulse3_2( afGradient, afRFPulse, dopt)
+    end
+
+    %Export
+    function callbkExport(~)
+        if size(shimList)==0
+            uialert(f,'You need to apply shims first.','Invalid Action');
+            return;
+        end
+        exportHelper(shimList(:,:,1));
+        pause(1);%Ensure the independent file names
+        exportHelper(shimList(:,:,2));
+        pause(1);%Ensure the independent file names
+        exportHelper(shimList(:,:,3));
+    end
+
+    function callbkAddShim(~)
+        gui = findall(0,'Type','uipanel','Parent',imagePanelGroup,'Title','Origin');
+        axes = findobj(gui,'-depth',1);
+       
+        if ~isempty(get(axes(end),'Tag')) && ~isempty(gui_ROI)
+            roi_id = get(axes(end),'Tag');
+            addpath(genpath('../Process'));
+            %Get ROI ID
+            roi_id = sprintf('roi_%s',roi_id);
+            mask_shm = evalin('base',char(roi_id));
+            roi_layers = de2bi(gui_ROI.roi_result.SelectedLayers,imageData.NumSlice);
+            Fullmask = zeros(size(mask_shm,1),size(mask_shm,2),size(roi_layers,2))
+            for ii = 1:size(roi_layers,2)
+                if roi_layers(ii)==1
+                    Fullmask(:,:,ii) = mask_shm;
+                else
+                    Fullmask(:,:,ii) = zeros(size(mask_shm,1),size(mask_shm,2));
+                end
+            end
+             
+            [B1p,B1pGauss] = GaussFilter(imageData.ImageSignal,Fullmask,imageData.NumChannel);
+            [shimList_B1p,shimList,mask_shm] = Shim(Fullmask,B1p,B1pGauss,imageData.ImageSignal);
+            
+            DisplayShim(mask_shm,shimList_B1p(:,:,:,1),'Shimming within ROI');
+            isFirstShim = 1;%Set special position for the fist graph
+            PlotShimBar(shimList(:,:,1),'Shimming within ROI');
+            
+            DisplayShim(mask_shm,shimList_B1p(:,:,:,2),'MLS shimming within ROI');
+            PlotShimBar(shimList(:,:,2),'MLS shimming within ROI');
+            
+            DisplayShim(mask_shm,shimList_B1p(:,:,:,3),'Phase-only shimming within ROI');
+            PlotShimBar(shimList(:,:,3),'Phase-only shimming within ROI');
+            
+        else
+            uialert(f,'ROI needed','Invalid Action');
+            return;
+        end
+     end
+    
+    %Patient 
+    function callbkPatient(~)
+        RemoveImage('Origin');
+        imageData = ImageData;
+        eventName = num2str(datenum(clock));
+        eventName = strrep(eventName,'.','_');%Generate Event Name
+        imageData.ID = eventName;
+        folderPath = uigetdir();
+        disp(folderPath);
+        if folderPath == 0
+            return;
+        end
+        folderContent = dir(folderPath);
+        fileNames = regexpi({folderContent.name},'.*IMA|.*DICM|.*DCM','match'); %Check file type
+        fileNames = fileNames(~cellfun('isempty',fileNames)); %Remove dir element
+        folderSize = size(fileNames,2); %Num of IMA/DICM files
+        index_divide = folderSize/2;
+        if folderSize < 2 || floor(index_divide)~=index_divide
+            uialert(f,'This folder is exceed/incompleted','Invalid Folder');
+            return;
+        end
+        folderContent = folderContent(~ismember({folderContent.name},{'.','..'}));
+        
+        %Acquire Channel from Users
+        channel_fig = uifigure('Position', [0 0 300 100],'Name','How many channel did your files use?');
+        CN = uieditfield(channel_fig,'numeric','Position', [100 50 50 30],'Limits',[1 20],'Value', 8);
+        uibutton(channel_fig,'ButtonPushedFcn', @(btn,event)callbkInputCN(btn,folderPath,folderContent,index_divide,folderSize),'BackgroundColor','w','Text', 'Confirm','Position', [155 50 50 30]);
+    end
+
+    %Shim Lists
+    function callbkShimLists(~)
+        gui = findall(0,'Name','Shim Lists');
+        if isempty(gui)
+          gui_ShimLists();
+        end
+        
+    end
+
+    %ROI ToolBox
+    function callbkROIToolBox(~)
+        gui = findall(0,'Name','ROI Tool Box');
+        image_panel = findall(0,'Title','Origin','Type','uipanel');
+        if ~isempty(gui) || isempty(image_panel)
+            return;
+        end
+        gui = findall(0,'Type','uipanel','Title','Origin');
+        axes = findobj(gui,'-depth',1);
+        imaga = findobj(axes(end).Children,'Type','Image'); %get Image
+        gui_ROI = ROI_gui(imaga.CData,imageData.ROI);
+        %gui_ROI = CROIEditor(imaga.CData);
+    end
+
+    %Analysis
+    function callbkAnalysis(~)
+        gui = findall(0,'Name','Add Analysis');
+        if isempty(gui)
+          gui_Analysis();
+        end
+    end
+
+    %Errors
+    function callbkErrors(~)
+        
+    end
+   
+    %Guide
+    function callbkGuide(~)
+        
+    end
+
+end
+##### SOURCE END #####
+--></body></html>
